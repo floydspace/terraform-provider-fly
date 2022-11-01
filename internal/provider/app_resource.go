@@ -9,7 +9,6 @@ import (
 	"github.com/floydspace/terraform-provider-fly/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	tfsdkprovider "github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,11 +16,8 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-var _ tfsdkprovider.ResourceType = flyAppResourceType{}
-var _ resource.Resource = flyAppResource{}
-var _ resource.ResourceWithImportState = flyAppResource{}
-
-type flyAppResourceType struct{}
+var _ resource.ResourceWithConfigure = &flyAppResource{}
+var _ resource.ResourceWithImportState = &flyAppResource{}
 
 type flyAppResourceData struct {
 	Id              types.String `tfsdk:"id"`
@@ -34,7 +30,11 @@ type flyAppResourceData struct {
 	//Secrets types.Map    `tfsdk:"secrets"`
 }
 
-func (ar flyAppResourceType) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (r flyAppResource) Metadata(_ context.Context, _ resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = "fly_app"
+}
+
+func (r flyAppResource) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Fly app resource",
@@ -92,16 +92,12 @@ func (ar flyAppResourceType) GetSchema(context.Context) (tfsdk.Schema, diag.Diag
 	}, nil
 }
 
-func (ar flyAppResourceType) NewResource(_ context.Context, in tfsdkprovider.Provider) (resource.Resource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
-
-	return flyAppResource{
-		provider: provider,
-	}, diags
+func newAppResource() resource.Resource {
+	return &flyAppResource{}
 }
 
 type flyAppResource struct {
-	provider provider
+	flyResource
 }
 
 func (r flyAppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -115,7 +111,7 @@ func (r flyAppResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	if data.Org.Unknown {
-		defaultOrg, err := utils.GetDefaultOrg(*r.provider.client)
+		defaultOrg, err := utils.GetDefaultOrg(r.gqlClient)
 		if err != nil {
 			resp.Diagnostics.AddError("Could not detect default organization", err.Error())
 			return
@@ -123,14 +119,14 @@ func (r flyAppResource) Create(ctx context.Context, req resource.CreateRequest, 
 		data.OrgId.Value = defaultOrg.Id
 		data.Org.Value = defaultOrg.Name
 	} else {
-		org, err := graphql.Organization(context.Background(), *r.provider.client, data.Org.Value)
+		org, err := graphql.Organization(context.Background(), r.gqlClient, data.Org.Value)
 		if err != nil {
 			resp.Diagnostics.AddError("Could not resolve organization", err.Error())
 			return
 		}
 		data.OrgId.Value = org.Organization.Id
 	}
-	mresp, err := graphql.CreateAppMutation(context.Background(), *r.provider.client, data.Name.Value, data.OrgId.Value)
+	mresp, err := graphql.CreateAppMutation(context.Background(), r.gqlClient, data.Name.Value, data.OrgId.Value)
 	if err != nil {
 		resp.Diagnostics.AddError("Create app failed", err.Error())
 		return
@@ -156,7 +152,7 @@ func (r flyAppResource) Create(ctx context.Context, req resource.CreateRequest, 
 	//			Value: v,
 	//		})
 	//	}
-	//	_, err := graphql.SetSecrets(context.Background(), *r.provider.client, graphql.SetSecretsInput{
+	//	_, err := graphql.SetSecrets(context.Background(), *r.gqlClient, graphql.SetSecretsInput{
 	//		AppId:      data.Id.Value,
 	//		Secrets:    secrets,
 	//		ReplaceAll: true,
@@ -185,7 +181,7 @@ func (r flyAppResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	query, err := graphql.GetFullApp(context.Background(), *r.provider.client, state.Name.Value)
+	query, err := graphql.GetFullApp(context.Background(), r.gqlClient, state.Name.Value)
 	var errList gqlerror.List
 	if errors.As(err, &errList) {
 		for _, err := range errList {
@@ -252,7 +248,7 @@ func (r flyAppResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	//			Value: v,
 	//		})
 	//	}
-	//	_, err := graphql.SetSecrets(context.Background(), *r.provider.client, graphql.SetSecretsInput{
+	//	_, err := graphql.SetSecrets(context.Background(), r.gqlClient, graphql.SetSecretsInput{
 	//		AppId:      state.Id.Value,
 	//		Secrets:    secrets,
 	//		ReplaceAll: true,
@@ -277,7 +273,7 @@ func (r flyAppResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	diags := req.State.Get(ctx, &data)
 	resp.Diagnostics.Append(diags...)
 
-	_, err := graphql.DeleteAppMutation(context.Background(), *r.provider.client, data.Name.Value)
+	_, err := graphql.DeleteAppMutation(context.Background(), r.gqlClient, data.Name.Value)
 	var errList gqlerror.List
 	if errors.As(err, &errList) {
 		for _, err := range errList {

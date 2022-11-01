@@ -6,16 +6,11 @@ import (
 	"github.com/floydspace/terraform-provider-fly/graphql"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	tfsdkprovider "github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces
-var _ tfsdkprovider.DataSourceType = volumeDataSourceType{}
-var _ datasource.DataSource = volumeDataSource{}
-
-type volumeDataSourceType struct{}
+var _ datasource.DataSourceWithConfigure = &volumeDataSource{}
 
 // Matches getSchema
 type volumeDataSourceOutput struct {
@@ -27,7 +22,11 @@ type volumeDataSourceOutput struct {
 	Internalid types.String `tfsdk:"internalid"`
 }
 
-func (v volumeDataSourceType) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (v volumeDataSource) Metadata(_ context.Context, _ datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = "fly_volume"
+}
+
+func (v volumeDataSource) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		MarkdownDescription: "Fly volume resource",
 		Attributes: map[string]tfsdk.Attribute{
@@ -66,12 +65,8 @@ func (v volumeDataSourceType) GetSchema(context.Context) (tfsdk.Schema, diag.Dia
 	}, nil
 }
 
-func (v volumeDataSourceType) NewDataSource(_ context.Context, in tfsdkprovider.Provider) (datasource.DataSource, diag.Diagnostics) {
-	provider, diags := convertProviderType(in)
-
-	return volumeDataSource{
-		provider: provider,
-	}, diags
+func newVolumeDataSource() datasource.DataSource {
+	return volumeDataSource{}
 }
 
 func (v volumeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -83,7 +78,7 @@ func (v volumeDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	internalId := data.Internalid.Value
 	app := data.Appid.Value
 
-	query, err := graphql.VolumeQuery(context.Background(), *v.provider.client, app, internalId)
+	query, err := graphql.VolumeQuery(context.Background(), v.gqlClient, app, internalId)
 	if err != nil {
 		resp.Diagnostics.AddError("Read: query failed", err.Error())
 	}
