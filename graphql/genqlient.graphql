@@ -49,6 +49,11 @@ fragment AppFragment on App {
     id
     slug
   }
+  secrets {
+    name
+    createdAt
+    digest
+  }
   appUrl
   hostname
   sharedIpAddress
@@ -265,8 +270,30 @@ mutation RemoveWireguardPeer($input: RemoveWireGuardPeerInput!) {
   }
 }
 
+query GetSecrets($name: String!) {
+  app(name: $name) {
+    secrets {
+      name
+      digest
+      createdAt
+    }
+  }
+}
+
 mutation SetSecrets($input: SetSecretsInput!) {
   setSecrets(input: $input) {
+    app {
+      secrets {
+        name
+        digest
+        createdAt
+      }
+    }
+  }
+}
+
+mutation UnsetSecrets($appId: ID!, $keys: [String!]!) {
+  unsetSecrets(input: { appId: $appId, keys: $keys }) {
     release {
       id
     }
