@@ -4,16 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
-	providerGraphql "github.com/fly-apps/terraform-provider-fly/graphql"
-	"github.com/fly-apps/terraform-provider-fly/internal/utils"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/Khan/genqlient/graphql"
+	providerGraphql "github.com/floydspace/terraform-provider-fly/graphql"
+	"github.com/floydspace/terraform-provider-fly/internal/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccApp_basic(t *testing.T) {
