@@ -132,7 +132,7 @@ func (mr flyMachineResourceType) GetSchema(context.Context) (tfsdk.Schema, diag.
 				Type:                types.StringType,
 			},
 			"cputype": {
-				MarkdownDescription: "cpu type",
+				MarkdownDescription: "cpu type: one of \"shared\" or \"performance\"",
 				Computed:            true,
 				Optional:            true,
 				Type:                types.StringType,
