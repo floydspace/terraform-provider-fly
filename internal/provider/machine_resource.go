@@ -176,8 +176,11 @@ func (mr flyMachineResourceType) GetSchema(context.Context) (tfsdk.Schema, diag.
 					},
 					"volume": {
 						Required:            true,
-						MarkdownDescription: "Name or ID of volume",
+						MarkdownDescription: "ID of volume",
 						Type:                types.StringType,
+						PlanModifiers: tfsdk.AttributePlanModifiers{
+							resource.RequiresReplace(),
+						},
 					},
 				}),
 			},

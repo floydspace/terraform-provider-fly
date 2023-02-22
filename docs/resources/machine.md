@@ -87,7 +87,7 @@ resource "fly_machine" "exampleMachine" {
 Required:
 
 - `path` (String) Path for volume to be mounted on vm
-- `volume` (String) Name or ID of volume
+- `volume` (String) ID of volume
 
 Optional:
 
