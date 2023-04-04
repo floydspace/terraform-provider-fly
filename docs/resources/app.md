@@ -32,8 +32,10 @@ resource "fly_app" "exampleApp" {
 ### Read-Only
 
 - `appurl` (String) readonly appUrl
+- `hostname` (String) readonly hostname
 - `id` (String) readonly app id
 - `orgid` (String) readonly orgid
+- `sharedipaddress` (String) readonly sharedIpAddress
 
 ## Import
 

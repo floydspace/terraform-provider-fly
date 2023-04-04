@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Khan/genqlient/graphql"
 
-	"time"
+	// Ensure documentation generator is not removed from go.mod.
+	_ "github.com/Khan/genqlient/generate"
+	_ "github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs"
 
 	"github.com/floydspace/terraform-provider-fly/internal/wg"
 )
