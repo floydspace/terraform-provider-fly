@@ -3,7 +3,7 @@ package provider
 import (
 	"context"
 
-	"github.com/fly-apps/terraform-provider-fly/graphql"
+	"github.com/floydspace/terraform-provider-fly/graphql"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"

@@ -3,14 +3,15 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
-	providerGraphql "github.com/fly-apps/terraform-provider-fly/graphql"
-	"github.com/fly-apps/terraform-provider-fly/internal/utils"
-	"github.com/fly-apps/terraform-provider-fly/internal/wg"
-	hreq "github.com/imroc/req/v3"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/Khan/genqlient/graphql"
+	providerGraphql "github.com/floydspace/terraform-provider-fly/graphql"
+	"github.com/floydspace/terraform-provider-fly/internal/utils"
+	"github.com/floydspace/terraform-provider-fly/internal/wg"
+	hreq "github.com/imroc/req/v3"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	tfsdkprovider "github.com/hashicorp/terraform-plugin-framework/provider"

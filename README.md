@@ -2,9 +2,10 @@
 
 # fly.io terraform provider
 
-[![Tests](https://github.com/fly-apps/terraform-provider-fly/actions/workflows/test.yml/badge.svg)](https://github.com/fly-apps/terraform-provider-fly/actions/workflows/test.yml)
+[![Tests](https://github.com/floydspace/terraform-provider-fly/actions/workflows/test.yml/badge.svg)](https://github.com/floydspace/terraform-provider-fly/actions/workflows/test.yml)
 
 ### Resources
+
 - app (stable, but apps will be deprecated soon. Begin to favor machines.)
 - cert (stable)
 - ip (stable)
@@ -13,11 +14,11 @@
 - postgres (todo)
 
 ### Data sources
+
 - app (stable)
 - cert (stable)
 - ip (stable)
 - volume (stable)
-
 
 ### TODO
 

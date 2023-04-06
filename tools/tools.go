@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/Khan/genqlient/graphql"
 	"net/http"
 	"os"
 
-	"github.com/fly-apps/terraform-provider-fly/internal/wg"
+	"github.com/Khan/genqlient/graphql"
+
 	"time"
+
+	"github.com/floydspace/terraform-provider-fly/internal/wg"
 )
 
 type transport struct {

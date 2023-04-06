@@ -3,8 +3,9 @@ package utils
 import (
 	"context"
 	"errors"
+
 	graphql2 "github.com/Khan/genqlient/graphql"
-	"github.com/fly-apps/terraform-provider-fly/graphql"
+	"github.com/floydspace/terraform-provider-fly/graphql"
 )
 
 func GetDefaultOrg(client graphql2.Client) (*graphql.OrgsQueryOrganizationsOrganizationConnectionNodesOrganization, error) {

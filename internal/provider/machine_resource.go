@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/fly-apps/terraform-provider-fly/internal/utils"
-	"github.com/fly-apps/terraform-provider-fly/pkg/apiv1"
+
+	"github.com/floydspace/terraform-provider-fly/internal/utils"
+	"github.com/floydspace/terraform-provider-fly/pkg/apiv1"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"

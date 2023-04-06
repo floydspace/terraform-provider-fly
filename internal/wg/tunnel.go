@@ -7,8 +7,15 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math/rand"
+	"net"
+	"net/http"
+	"net/netip"
+	"strconv"
+	"time"
+
 	rawgql "github.com/Khan/genqlient/graphql"
-	"github.com/fly-apps/terraform-provider-fly/graphql"
+	"github.com/floydspace/terraform-provider-fly/graphql"
 	"github.com/google/uuid"
 	"github.com/miekg/dns"
 	"golang.org/x/crypto/curve25519"
@@ -16,12 +23,6 @@ import (
 	"golang.zx2c4.com/wireguard/device"
 	"golang.zx2c4.com/wireguard/tun"
 	"golang.zx2c4.com/wireguard/tun/netstack"
-	"math/rand"
-	"net"
-	"net/http"
-	"net/netip"
-	"strconv"
-	"time"
 )
 
 type PrivateKey device.NoisePrivateKey

@@ -1,4 +1,4 @@
-module github.com/fly-apps/terraform-provider-fly
+module github.com/floydspace/terraform-provider-fly
 
 go 1.19
 
