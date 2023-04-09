@@ -75,7 +75,8 @@ func (d *flyAppResourceData) updateFromApi(a graphql.AppFragment) {
 	d.Org = types.String{Value: a.Organization.Slug}
 	d.OrgId = types.String{Value: a.Organization.Id}
 	d.AppUrl = types.String{Value: a.AppUrl}
-	d.Id = types.String{Value: a.Id}
+	d.Hostname = types.String{Value: a.Hostname}
+	d.SharedIpAddress = types.String{Value: a.SharedIpAddress}
 }
 
 func (d *flyAppResourceData) updateSecretsFromApi(a graphql.AppFragment) {
@@ -168,6 +169,9 @@ func (r flyAppResource) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnosti
 				Computed:            true,
 				MarkdownDescription: "readonly app id",
 				Type:                types.StringType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					resource.UseStateForUnknown(),
+				},
 			},
 			"appurl": {
 				Computed:            true,
@@ -178,11 +182,17 @@ func (r flyAppResource) GetSchema(context.Context) (tfsdk.Schema, diag.Diagnosti
 				Computed:            true,
 				MarkdownDescription: "readonly hostname",
 				Type:                types.StringType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					resource.UseStateForUnknown(),
+				},
 			},
 			"sharedipaddress": {
 				Computed:            true,
 				MarkdownDescription: "readonly sharedIpAddress",
 				Type:                types.StringType,
+				PlanModifiers: tfsdk.AttributePlanModifiers{
+					resource.UseStateForUnknown(),
+				},
 			},
 		},
 	}, nil
@@ -227,6 +237,7 @@ func (r flyAppResource) Create(ctx context.Context, req resource.CreateRequest, 
 		resp.Diagnostics.AddError("Create app failed", err.Error())
 		return
 	}
+	data.Id = types.String{Value: mresp.CreateApp.App.Id}
 	data.updateFromApi(mresp.CreateApp.App)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

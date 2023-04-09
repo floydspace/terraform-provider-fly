@@ -37,7 +37,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/fly-apps/fly",
+		Address: "registry.terraform.io/floydspace/fly",
 		Debug:   debug,
 	}
 
